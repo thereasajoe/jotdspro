@@ -216,6 +216,11 @@ def get_embedding(text):
     return response.json()["data"][0]["embedding"]
 
 def A9(filename='/data/comments.txt', output_filename='/data/comments-similar.txt'):
+    AIPROXY_TOKEN = os.getenv("AIPROXY_TOKEN")  # Ensure token is loaded
+
+    if not AIPROXY_TOKEN:
+        raise ValueError("❌ AIPROXY_TOKEN is missing! Make sure it is set in the environment.")
+
     # Read comments
     with open(filename, 'r') as f:
         comments = [line.strip() for line in f.readlines()]
