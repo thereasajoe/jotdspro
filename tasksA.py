@@ -18,6 +18,8 @@ AIPROXY_TOKEN = os.getenv('AIPROXY_TOKEN')
 
 def A1(email="23f3004024@ds.study.iitm.ac.in"):
     try:
+       
+
         process = subprocess.Popen(
             ["uv", "run", "https://raw.githubusercontent.com/sanand0/tools-in-data-science-public/tds-2025-01/project-1/datagen.py", email],
             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
