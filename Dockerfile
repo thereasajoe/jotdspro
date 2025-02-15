@@ -1,4 +1,11 @@
-FROM python:3.12-slim-bookworm
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
@@ -7,21 +14,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certifi
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
 RUN sh /uv-installer.sh && rm /uv-installer.sh
 
-# Install FastAPI and Uvicorn
-RUN pip install fastapi uvicorn
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Ensure the installed binary is on the `PATH`
+# Ensure the installed binary is on the PATH
 ENV PATH="/root/.local/bin:$PATH"
 
-# Set up the application directory
-WORKDIR /app
+# Expose port 8000 for the FastAPI app
+EXPOSE 8000
 
-# Copy application files
-COPY app.py /app
-# Copy all application files
-#COPY . /app/
+# Run the FastAPI app
+CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "8000"]
 
 RUN mkdir -p /app/data
-
-# Explicitly set the correct binary path and use `sh -c`
-CMD ["/root/.local/bin/uv", "run", "app.py"]
