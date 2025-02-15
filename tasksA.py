@@ -18,16 +18,29 @@ AIPROXY_TOKEN = os.getenv('AIPROXY_TOKEN')
 
 def A1(email="23f3004024@ds.study.iitm.ac.in"):
     try:
-       
+        DATA_DIR = os.path.join(os.path.expanduser("~"), "data")
+        os.makedirs(DATA_DIR, exist_ok=True)  # Ensure the directory exists
 
-        process = subprocess.Popen(
-            ["uv", "run", "https://raw.githubusercontent.com/sanand0/tools-in-data-science-public/tds-2025-01/project-1/datagen.py", email],
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-        )
-        stdout, stderr = process.communicate()
+        script_path = os.path.join(DATA_DIR, "datagen.py")
+
+        # Download the script if it doesn't exist
+        if not os.path.exists(script_path):
+            subprocess.run(["curl", "-sSL", "https://raw.githubusercontent.com/sanand0/tools-in-data-science-public/tds-2025-01/datagen.py", "-o", script_path], check=True)
+
+        # Ensure execute permissions
+        os.chmod(script_path, 0o755)
+
+        # Run the script
+        output_file = os.path.join(DATA_DIR, "data")
+        with open(output_file, "w") as f:
+            process = subprocess.Popen(["python", script_path, email], stdout=f, stderr=subprocess.PIPE, text=True, cwd=DATA_DIR)
+            _, stderr = process.communicate()
+
         if process.returncode != 0:
             raise HTTPException(status_code=500, detail=f"Error: {stderr}")
-        return stdout
+
+        return f"✅ Output stored in {output_file}"
+
     except subprocess.CalledProcessError as e:
         raise HTTPException(status_code=500, detail=f"Error: {e.stderr}")
 # A1()
