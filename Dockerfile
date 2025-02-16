@@ -22,6 +22,7 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install pillow
 
 # Ensure the installed binary is on the PATH
 ENV PATH="/root/.local/bin:$PATH"
